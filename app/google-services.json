@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "846570772642",
+    "firebase_url": "https://admob-app-id-5218263139.firebaseio.com",
+    "project_id": "admob-app-id-5218263139",
+    "storage_bucket": "admob-app-id-5218263139.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846570772642:android:00ea106bf31c28d6",
+        "android_client_info": {
+          "package_name": "com.canto.lucio.canto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846570772642-rt86r99gra441q8arsnl7hbmtgq2f2n8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkdVfjR24xZ4-g8cCIIgwsX7mjskSfF1U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
