@@ -1,26 +1,23 @@
 package com.canto.lucio.canto;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-
-import java.io.IOException;
 
 public class MainActivity extends Activity implements MediaPlayer.OnPreparedListener, MediaController.MediaPlayerControl{
     private static final String TAG = "AudioPlayer";
@@ -50,7 +47,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
                 if(btnBackground.isChecked()) {
                     mediaPlayer.stop();
                     mediaController.hide();
-                    startService(new Intent(MainActivity.this, MediaService.class));
+                    if(!isMyServiceRunning())
+                        startService(new Intent(MainActivity.this, MediaService.class));
                 }else{
                     stopService(new Intent(MainActivity.this, MediaService.class));
                     mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.canto_femea_coleiro);
@@ -67,9 +65,12 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
         mediaPlayer.setLooping(true);
         mediaController = new MediaController(this);
 
-
-        mediaPlayer.start();
-        mediaController.show(0);
+        if(!isMyServiceRunning()) {
+            mediaPlayer.start();
+            mediaController.show(0);
+        }else{
+            btnBackground.setChecked(true);
+        }
 
     }
 
@@ -104,8 +105,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
     public void pause() {
         if(mediaPlayer!=null){
             mediaPlayer.pause();
-            mediaPlayer.stop();
-            finish();
         }
         super.onPause();
     }
@@ -158,16 +157,18 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
     //--------------------------------------------------------------------------------
 
     public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.d(TAG, "onPrepared");
-        mediaController.setMediaPlayer(this);
-        mediaController.setAnchorView(findViewById(R.id.main_audio_view));
+        if (!isMyServiceRunning()) {
+            Log.d(TAG, "onPrepared");
+            mediaController.setMediaPlayer(this);
+            mediaController.setAnchorView(findViewById(R.id.main_audio_view));
 
-        handler.post(new Runnable() {
-            public void run() {
-                mediaController.setEnabled(true);
-                mediaController.show(0);
-            }
-        });
+            handler.post(new Runnable() {
+                public void run() {
+                    mediaController.setEnabled(true);
+                    mediaController.show(0);
+                }
+            });
+        }
     }
 
     @Override
@@ -177,7 +178,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
                 .setCancelable(false)
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        stopService(new Intent(MainActivity.this, MediaService.class));
                         MainActivity.this.finish();
                     }
                 })
@@ -189,5 +189,21 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
         AlertDialog alert = builder.create();
         alert.show();
 
+    }
+
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MediaService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        int i = 0;
+        super.onDestroy();
     }
 }
