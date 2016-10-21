@@ -3,11 +3,8 @@ package com.canto.lucio.canto;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.widget.MediaController;
 
 /**
