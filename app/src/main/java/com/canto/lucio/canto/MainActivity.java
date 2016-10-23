@@ -178,6 +178,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnPreparedList
                 .setCancelable(false)
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        if (isMyServiceRunning()){
+                            stopService(new Intent(MainActivity.this, MediaService.class));
+                        }
                         MainActivity.this.finish();
                     }
                 })
